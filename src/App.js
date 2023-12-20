@@ -1,5 +1,5 @@
 import { useSelector, Provider } from 'react-redux';
-import { Input, Button } from 'antd';
+import { Input, Button, message } from 'antd';
 import { OpenAI } from "langchain/llms/openai";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 
@@ -21,17 +21,18 @@ function App() {
       temperature: 0.9,
     });
     
-    const chatModel = new ChatOpenAI();
+    // const chatModel = new ChatOpenAI();
     
     const text = _content;
       // "What would be a good company name for a company that makes colorful socks?";
     
     const llmResult = await llm.predict(text);
+    message.success(llmResult);
     /*
       "Feetful of Fun"
     */
     
-    const chatModelResult = await chatModel.predict(text);
+    // const chatModelResult = await chatModel.predict(text);
   };
 
   var tmp = Object.values(g_fileListResult);

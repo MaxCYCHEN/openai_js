@@ -17,14 +17,14 @@ function App() {
 
   var onSubmit = async (_openApiKey, _content) => {
     const llm = new OpenAI({
-      openAIApiKey: "YOUR_KEY_HERE",
+      openAIApiKey: _openApiKey,
       temperature: 0.9,
     });
     
     const chatModel = new ChatOpenAI();
     
-    const text =
-      "What would be a good company name for a company that makes colorful socks?";
+    const text = _content;
+      // "What would be a good company name for a company that makes colorful socks?";
     
     const llmResult = await llm.predict(text);
     /*

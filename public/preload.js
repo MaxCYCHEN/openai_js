@@ -2,7 +2,6 @@
 // It has the same sandbox as a Chrome extension.
 const { contextBridge, ipcRenderer } = require("electron");
 const child_process = require('node:child_process');
-const fs = require('fs-extra');
 // const rimraf =  require ( 'rimraf' );
 
 // As an example, here we use the exposeInMainWorld API to expose the browsers
@@ -11,6 +10,5 @@ const fs = require('fs-extra');
 process.once("loaded", () => {
   contextBridge.exposeInMainWorld("versions", process.versions);
   contextBridge.exposeInMainWorld("child_process", child_process);
-  contextBridge.exposeInMainWorld("fs", fs);
   contextBridge.exposeInMainWorld("ipcRenderer", ipcRenderer);
 });

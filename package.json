@@ -1,7 +1,10 @@
 {
   "name": "openai",
   "homepage": "./",
-  "version": "0.1.0",
+  "main": "./public/electron.js",
+  "description": "NuTool - Code Generator",
+  "author": "Nuvoton Technology Corp.",
+  "version": "2.0.0",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
@@ -26,7 +29,14 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "clean": "rimraf package-lock.json & rimraf node_modules",
+    "cleanb": "rimraf build",
+    "electron:start": "concurrently -k \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electronmon .\"",
+    "electron:package:mac": "npm run build && electron-builder -m",
+    "electron:package:win": "npm run build && electron-builder -w",
+    "electron:package:linux": "npm run build && electron-builder -l",
+    "electron:clean": "rimraf dist"
   },
   "eslintConfig": {
     "extends": [
@@ -36,14 +46,44 @@
   },
   "browserslist": {
     "production": [
+      "last 1 electron version",
       ">0.2%",
       "not dead",
       "not op_mini all"
     ],
     "development": [
+      "last 1 electron version",
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1",
+    "electronmon": "^2.0.2",
+    "rimraf": "^5.0.5",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.nuvoton.codegenerator",
+    "productName": "NuTool - Code Generator",
+    "extends": null,
+    "asar": false,
+    "npmRebuild": false,
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": [
+        "zip"
+      ],
+      "icon": "build/NuTool-CodeGenerator_B-256.ico"
+    },
+    "linux": {
+      "target": "deb"
+    }
   }
 }

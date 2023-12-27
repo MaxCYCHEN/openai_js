@@ -9,6 +9,7 @@ import DraggerUpload from "./components/draggerUpload";
 import Question from "./components/question";
 
 import './App.css';
+var {OpenAIEmbeddings, FaissStore, ConversationalRetrievalQAChain, BufferMemory} = window;
 
 function App() {
   const g_openApiKey = useSelector((state) => state.g_openApiKey);

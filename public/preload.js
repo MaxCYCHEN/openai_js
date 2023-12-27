@@ -7,8 +7,18 @@ const child_process = require('node:child_process');
 // As an example, here we use the exposeInMainWorld API to expose the browsers
 // and node versions to the main window.
 // They'll be accessible at "window.versions".
+
+const { OpenAIEmbeddings }  = require("langchain/embeddings/openai");
+const { FaissStore } = require("langchain/vectorstores/faiss");
+const { ConversationalRetrievalQAChain } = require("langchain/chains");
+const { BufferMemory } = require("langchain/memory");
+
 process.once("loaded", () => {
   contextBridge.exposeInMainWorld("versions", process.versions);
   contextBridge.exposeInMainWorld("child_process", child_process);
   contextBridge.exposeInMainWorld("ipcRenderer", ipcRenderer);
+  contextBridge.exposeInMainWorld("OpenAIEmbeddings", OpenAIEmbeddings);
+  contextBridge.exposeInMainWorld("FaissStore", FaissStore);
+  contextBridge.exposeInMainWorld("ConversationalRetrievalQAChain", ConversationalRetrievalQAChain);
+  contextBridge.exposeInMainWorld("BufferMemory", BufferMemory);
 });

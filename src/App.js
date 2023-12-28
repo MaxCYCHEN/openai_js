@@ -24,7 +24,7 @@ function App() {
   const g_question = useSelector((state) => state.g_question);
 
   var onSubmit = async (_openApiKey, _content) => {
-    let key = _openApiKey || "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";
+    let key = _openApiKey;
     let dir = "TRM_M463_M467_Series_EN_Rev1.01_openai";
     let template = `Use the following pieces of context and chat history to answer the question. 
     The context is Nuvoton M467 Series Technical Reference Manual. 

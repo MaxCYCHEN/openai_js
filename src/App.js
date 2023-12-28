@@ -1,7 +1,5 @@
 import { useSelector, Provider } from 'react-redux';
-import { Input, Button, message } from 'antd';
-import { OpenAI } from "langchain/llms/openai";
-import { ChatOpenAI } from "langchain/chat_models/openai";
+import { Input, Button, Modal  } from 'antd';
 
 import store from "./store";
 import ApiKey from "./components/apiKey";
@@ -9,7 +7,16 @@ import DraggerUpload from "./components/draggerUpload";
 import Question from "./components/question";
 
 import './App.css';
-var {OpenAIEmbeddings, FaissStore, ConversationalRetrievalQAChain, BufferMemory} = window;
+
+setTimeout(()=> {
+	window.api.electron_receive((event, type, data) => {
+    Modal.info({
+      title: "Response",
+      content: data.text,
+      centered: true,
+    })
+  })
+}, 1000);
 
 function App() {
   const g_openApiKey = useSelector((state) => state.g_openApiKey);
@@ -17,23 +24,26 @@ function App() {
   const g_question = useSelector((state) => state.g_question);
 
   var onSubmit = async (_openApiKey, _content) => {
-    const llm = new OpenAI({
-      openAIApiKey: _openApiKey,
-      temperature: 0.9,
-    });
-    
-    // const chatModel = new ChatOpenAI();
-    
-    const text = _content;
-      // "What would be a good company name for a company that makes colorful socks?";
-    
-    const llmResult = await llm.predict(text);
-    message.success(llmResult);
-    /*
-      "Feetful of Fun"
-    */
-    
-    // const chatModelResult = await chatModel.predict(text);
+    let key = _openApiKey || "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";
+    let dir = "TRM_M463_M467_Series_EN_Rev1.01_openai";
+    let template = `Use the following pieces of context and chat history to answer the question. 
+    The context is Nuvoton M467 Series Technical Reference Manual. 
+    If you don't know the answer or the question has nothing to do with code or programing, don't try to make up an answer.
+    ----------
+    Context: {context}
+    ----------
+    Chat History: {chat_history}
+    ----------
+    Question: {question}
+    ----------
+    Your answer:`;
+
+    try{
+      await window.api.electron_openai(key, dir, template, _content);
+    }
+    catch(e){
+      console.error(e);
+    }
   };
 
   var tmp = Object.values(g_fileListResult);

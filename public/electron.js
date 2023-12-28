@@ -1,5 +1,11 @@
 // Module to control the application lifecycle and the native browser window.
 const { app, BrowserWindow, protocol, ipcMain } = require("electron");
+const { OpenAI } = require( "langchain/llms/openai");
+const { OpenAIEmbeddings } = require("langchain/embeddings/openai");
+const { FaissStore } = require("langchain/vectorstores/faiss");
+const { BufferMemory } = require("langchain/memory");
+const { ConversationalRetrievalQAChain } = require("langchain/chains");
+
 const path = require("path");
 const url = require("url");
 
@@ -20,6 +26,68 @@ function createWindow() {
       preload: path.join(__dirname, "preload.js"),
       devTools: true, // Developer Tools
     },
+  });
+
+  /**
+   * QA system
+   * @param {String} key openAIApiKey
+   * @param {String} dir The directory of data saved from Python
+   * @param {String} template 
+   * @param {String} question 
+   */
+  ipcMain.on('electron_openai', async(event, key, dir, template, question) => {
+    try {
+      // Load model
+      const llm_model = new OpenAI({
+        openAIApiKey: key,
+        temperature: 0.1,
+      });
+
+      const embeddings = new OpenAIEmbeddings({
+        openAIApiKey: key,
+        batchSize: 512, // Default value if omitted is 512. Max is 2048
+      });
+
+      // Load the vector store from the directory
+      const loadedVectorStore = await FaissStore.loadFromPython(
+        path.join(__dirname + dir),
+        embeddings
+      );
+
+      // Initialize a retriever wrapper around the vector store
+      const vectorStoreRetriever = loadedVectorStore.asRetriever(8, "mmr");
+
+      // build the memory
+      const memory_QA = new BufferMemory({
+        memoryKey: "chat_history",
+        inputKey: "question", // The key for the input to the chain
+        outputKey: "text", // The key for the final conversational output of the chain
+        returnMessages: true, // If using with a chat model (e.g. gpt-3.5 or gpt-4)
+      });
+
+      // build the chain finish,
+      const chain = ConversationalRetrievalQAChain.fromLLM(
+        llm_model,
+        vectorStoreRetriever,
+        {
+          returnSourceDocuments: true,
+          memory: memory_QA,
+          questionGeneratorChainOptions: {
+            template,
+          },
+        }
+      );
+
+      // call the LLM (This one need a buttom)
+      const res = await chain.call({
+        question,
+      });
+
+      mainWindow.webContents.send('electron_send', "response", res);
+    }
+    catch(e){
+      console.error(e);
+    }
   });
 
   // In production, set the initial browser path to the local bundle generated

@@ -17,7 +17,9 @@
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "antd": "^5.12.3",
+    "faiss-node": "^0.5.1",
     "langchain": "^0.0.210",
+    "pickleparser": "^0.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.0.4",
@@ -42,7 +44,10 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "no-undef": "off"
+    }
   },
   "browserslist": {
     "production": [
@@ -71,6 +76,14 @@
     "appId": "com.nuvoton.codegenerator",
     "productName": "NuTool - Code Generator",
     "extends": null,
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "extraMetadata": {
+      "main": "build/electron.js"
+    },
     "asar": false,
     "npmRebuild": false,
     "mac": {
